@@ -2,7 +2,7 @@
 
 ## Description
 
-> This project is the first phase of the Airbnb Clone, focusing on the backend console. The repository contains a command-line interpreter that serves > as a management tool for different class instances, simulating the basic functionalities of a database. The core class, `BaseModel`, provides shared > functionality for a variety of subclass models (`Amenity`, `City`, `State`, `Place`, `Review`), allowing for instance creation, updating, and deletio> n through simple commands.
+> This project is the first phase of the Airbnb Clone, focusing on the backend console. The repository contains a command-line interpreter that serves > as a management tool for different class instances, simulating the basic functionalities of a database.The core class, `BaseModel`, provides shared > functionality for a variety of subclass models (`Amenity`, `City`, `State`, `Place`, `Review`), allowing for instance creation, updating, and deletion> through simple commands.
 
 ## Features
 

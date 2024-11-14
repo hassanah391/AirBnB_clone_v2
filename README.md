@@ -1,45 +1,75 @@
-### Airbnb Clone
-#### Description
-> This is the first phase of the Airbnb Clone: the console.
-> This repository holds a command interpreter and classes (i.e. BaseModel class
-> and several other classes that inherit from it: Amenity, City, State, Place,
-> Review), and a command interpreter. The command interpreter, like a shell,
-> can be activated, take in user input, and perform certain tasks
-> to manipulate the object instances.
-#### How to Use Command Interpreter
----
-| Commands  | Sample Usage                                  | Functionality                              |
-| --------- | --------------------------------------------- | ------------------------------------------ |
-| help    | help                                        | Displays all available commands            |
-| create  | create <class>                              | Creates a new object (e.g., User, Place)   |
-| update  | User.update('123', {'name' : 'Greg_n_Mel'}) | Updates an object's attribute              |
-| destroy | User.destroy('123')                         | Deletes a specified object                 |
-| show    | User.show('123')                            | Retrieves an object from a file or database|
-| all     | User.all()                                  | Displays all objects in a class            |
-| count   | User.count()                                | Returns the count of objects in a specified class|
-| quit    | quit                                        | Exits the command interprete               |
-#### Installation
+# Airbnb Clone - Console
 
+## Description
+
+> This project is the first phase of the Airbnb Clone, focusing on the backend console. The repository contains a command-line interpreter that serves > as a management tool for different class instances, simulating the basic functionalities of a database. The core class, `BaseModel`, provides shared > functionality for a variety of subclass models (`Amenity`, `City`, `State`, `Place`, `Review`), allowing for instance creation, updating, and deletio> n through simple commands.
+
+## Features
+
+- **Object Persistence**: Save, load, and manage object instances.
+- **Command Interpreter**: An interactive and non-interactive interpreter that mimics a Unix shell for object manipulation.
+- **Class Models**: Built-in support for essential classes with unique attributes and relationships.
+
+## Command Interpreter Usage
+
+| Command     | Example Usage                                   | Description                                 |
+|-------------|-------------------------------------------------|---------------------------------------------|
+| `help`      | `help`                                          | Lists all available commands                |
+| `create`    | `create <class>`                                | Creates a new instance of a class (e.g., `User`, `Place`)  |
+| `update`    | `<class>.update('<id>', {'attribute': 'value'})`| Updates an attribute of an object           |
+| `destroy`   | `<class>.destroy('<id>')`                       | Deletes a specific object                   |
+| `show`      | `<class>.show('<id>')`                          | Shows an object's details                   |
+| `all`       | `<class>.all()`                                 | Lists all instances of a specified class    |
+| `count`     | `<class>.count()`                               | Displays the count of class instances       |
+| `quit`      | `quit`                                          | Exits the command interpreter               |
+
+#### Installation
+```
 git clone git@github.com:hassanah391/AirBnB_clone.git
 cd AirBnB_clone
-
+```
 #### Usage
 Interactive Mode
-
+```
 $ ./console.py
 (hbnb) help
+
+Documented commands (type help <topic>):
+========================================
+EOF  help  quit
+
+(hbnb)
+(hbnb)
 (hbnb) quit
-
+$
+```
 Non-Interactive Mode
-
+```
 $ echo "help" | ./console.py
 (hbnb)
+
+Documented commands (type help <topic>):
+========================================
+EOF  help  quit
+(hbnb)
+$
+$ cat test_help
+help
+$
 $ cat test_help | ./console.py
 (hbnb)
+
+Documented commands (type help <topic>):
+========================================
+EOF  help  quit
+(hbnb)
+$
+```
 
 ### Environment
 * Language: Python3 (version 3.8.5)
 * OS: Ubuntu 20.04 LTS
-* Style guidelines: [Pycodestyle 2.8.0], [Google Style Python Docstrings]
+* Style guidelines: [Pycodestyle 2.8.0](https://pycodestyle.pycqa.org/en/2.8.0/)
+
 ### Authors
-Hassan Ahmed [@](https://www.linkedin.com/in/hassan-ahmed-77578b206/)
+Hassan Ahmed [![M](https://upload.wikimedia.org/wikipedia/fr/thumb/c/c8/Twitter_Bird.svg/30px-Twitter_Bird.svg.png)](https://x.com/hassan357753)

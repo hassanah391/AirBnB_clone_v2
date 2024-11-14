@@ -73,4 +73,4 @@ $
 * Style guidelines: [Pycodestyle 2.8.0](https://pycodestyle.pycqa.org/en/2.8.0/)
 
 ### Authors
-Hassan Ahmed [![M](https://upload.wikimedia.org/wikipedia/fr/thumb/c/c8/Twitter_Bird.svg/30px-Twitter_Bird.svg.png)](https://x.com/hassan357753)
+Hassan Ahmed (https://x.com/hassan357753)

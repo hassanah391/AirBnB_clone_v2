@@ -17,13 +17,20 @@ class BaseModel:
         __repr__(self)
         to_dict(self)
     """
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """
         Initialize attributes: random uuid, dates created/updated
         """
-        self.id = str(uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        if kwargs:
+           for key, value in kwargs.items():
+                if key == "updated_at" or key == "created_at":
+                   setattr(self, key, datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f"))
+                elif key != "__class__":
+                    setattr(self, key, value)
+        else:
+            self.id = str(uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
 
     def __str__(self):
         """

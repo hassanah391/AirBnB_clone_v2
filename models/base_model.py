@@ -7,6 +7,7 @@ that inhertes from it.
 from uuid import uuid4
 from datetime import datetime
 
+
 class BaseModel:
     """Base class for Airbnb clone project
     Methods:

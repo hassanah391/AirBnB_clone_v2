@@ -8,6 +8,7 @@ from uuid import uuid4
 from datetime import datetime
 from models import storage
 
+
 class BaseModel:
     """Base class for Airbnb clone project
     Methods:
@@ -22,9 +23,10 @@ class BaseModel:
         Initialize attributes: random uuid, dates created/updated
         """
         if kwargs:
-           for key, value in kwargs.items():
+            for key, value in kwargs.items():
                 if key == "updated_at" or key == "created_at":
-                   setattr(self, key, datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f"))
+                    setattr(self, key,
+                            datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f"))
                 elif key != "__class__":
                     setattr(self, key, value)
         else:

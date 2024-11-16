@@ -1,40 +1,51 @@
 #!/usr/bin/python3
-"""
-
-Module file_storage has
-a class FileStorage  that serializes instances to a JSON file
-and deserializes JSON file to instances:
-"""
+'''File Storage'''
 import json
+from models.base_model import BaseModel
 
 
 class FileStorage:
-    __file_path = "file.json"
+    '''serializes and deserialzes json files'''
+
+    __file_path = 'file.json'
     __objects = {}
+    class_dict = {"BaseModel": BaseModel}
 
     def all(self):
-        """returns the dictionary __objects"""
+        '''Return dictionary of <class>.<id> : object instance'''
         return self.__objects
+
     def new(self, obj):
-        """sets in __objects the obj with key <obj class name>.id"""
-        self.__objects[f"{obj.__class__.__name__}.{obj.id}"] = obj
+        '''Add new obj to existing dictionary of instances'''
+        if obj:
+            key = '{}.{}'.format(obj.__class__.__name__, obj.id)
+            self.__objects[key] = obj
+
     def save(self):
-        """serializes __objects to the JSON file (path: __file_path)"""
-        my_dic = {}
+        '''Save obj dictionaries to json file'''
+        my_dict = {}
 
         for key, obj in self.__objects.items():
-            my_dic[key] = obj.to_dict()
-
+            '''if type(obj) is dict:
+            my_dict[key] = obj
+            else:'''
+            my_dict[key] = obj.to_dict()
         with open(self.__file_path, 'w') as f:
-            json.dump(my_dic, f)
+            json.dump(my_dict, f)
 
     def reload(self):
-        """deserializes the JSON file to __objects"""
+        '''If JSON file exists, convert object dictionaries back to instances'''
         try:
             with open(self.__file_path, 'r') as f:
-                new_obj = json.load(f)
-                for key, value in new_obj.items():
-                    obj = self.class_dict[value['__class__']](**value)
+                try:
+                    new_obj = json.load(f)
+                except json.JSONDecodeError:
+                    return
+            for key, val in new_obj.items():
+                try:
+                    obj = self.class_dict[val['__class__']](**val)
                     self.__objects[key] = obj
+                except KeyError:
+                 print(f"Class {val['__class__']} is not recognized.")
         except FileNotFoundError:
             pass

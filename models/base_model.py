@@ -1,15 +1,15 @@
 #!/usr/bin/python3
-"""
-Module base_model has
-a class BaseModel that is super class of all subclasses
-that inhertes from it.
-"""
-from uuid import uuid4
 from datetime import datetime
-from models import storage
+from uuid import uuid4
+import models
+
+"""
+Module BaseModel
+Parent of all classes
+"""
 
 
-class BaseModel:
+class BaseModel():
     """Base class for Airbnb clone project
     Methods:
         __init__(self, *args, **kwargs)
@@ -18,41 +18,50 @@ class BaseModel:
         __repr__(self)
         to_dict(self)
     """
+
     def __init__(self, *args, **kwargs):
         """
         Initialize attributes: random uuid, dates created/updated
+
+
         """
         if kwargs:
-            for key, value in kwargs.items():
-                if key == "updated_at" or key == "created_at":
-                    setattr(self, key,
-                            datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f"))
-                elif key != "__class__":
-                    setattr(self, key, value)
+            for key, val in kwargs.items():
+                if "created_at" == key:
+                    self.created_at = datetime.strptime(kwargs["created_at"],
+                                                        "%Y-%m-%dT%H:%M:%S.%f")
+                elif "updated_at" == key:
+                    self.updated_at = datetime.strptime(kwargs["updated_at"],
+                                                        "%Y-%m-%dT%H:%M:%S.%f")
+                elif "__class__" == key:
+                    pass
+                else:
+                    setattr(self, key, val)
         else:
             self.id = str(uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
-            storage.new(self)
+            models.storage.new(self)
 
     def __str__(self):
         """
         Return string of info about model
         """
-        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
-
-    def save(self):
-        """
-        Update instance with updated time & save to serialized file
-        """
-        self.updated_at = datetime.now()
-        storage.save()
+        return ('[{}] ({}) {}'.
+                format(self.__class__.__name__, self.id, self.__dict__))
 
     def __repr__(self):
         """
         returns string representation
         """
         return (self.__str__())
+
+    def save(self):
+        """
+        Update instance with updated time & save to serialized file
+        """
+        self.updated_at = datetime.now()
+        models.storage.save()
 
     def to_dict(self):
         """

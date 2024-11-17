@@ -2,7 +2,7 @@
 """
 
 Module review has a class called Review that inherits from
-Basemodel class 
+Basemodel class
 """
 from models.base_model import BaseModel
 
@@ -17,4 +17,3 @@ class Review(BaseModel):
     place_id = ""
     user_id = ""
     text = ""
-    

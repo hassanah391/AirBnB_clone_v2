@@ -2,7 +2,7 @@
 """
 
 Module city has a class called City that inherits from
-Basemodel class 
+Basemodel class
 """
 from models.base_model import BaseModel
 
@@ -15,4 +15,3 @@ class City(BaseModel):
     """
     state_id = ""
     name = ""
-    

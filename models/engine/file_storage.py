@@ -3,6 +3,11 @@
 import json
 from models.base_model import BaseModel
 from models.user import User
+from models.state import State
+from models.city import City
+from models.review import Review
+from models.amenity import Amenity
+from models.place import Place
 
 
 class FileStorage:
@@ -10,7 +15,9 @@ class FileStorage:
 
     __file_path = 'file.json'
     __objects = {}
-    class_dict = {"BaseModel": BaseModel, "User": User}
+    class_dict = {"BaseModel": BaseModel, "User": User, "State": State,
+                  "City": City, "Review": Review, "Amenity": Amenity,
+                  "Place": Place}
 
     def all(self):
         '''Return dictionary of <class>.<id> : object instance'''
@@ -35,7 +42,7 @@ class FileStorage:
             json.dump(my_dict, f)
 
     def reload(self):
-        '''If JSON file exists, convert object dictionaries back to instances'''
+        '''If JSON file exists, convert obj dictionaries back to instances'''
         try:
             with open(self.__file_path, 'r') as f:
                 try:
@@ -47,6 +54,6 @@ class FileStorage:
                     obj = self.class_dict[val['__class__']](**val)
                     self.__objects[key] = obj
                 except KeyError:
-                 print(f"Class {val['__class__']} is not recognized.")
+                    print(f"Class {val['__class__']} is not recognized.")
         except FileNotFoundError:
             pass

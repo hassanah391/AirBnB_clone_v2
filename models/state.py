@@ -2,7 +2,7 @@
 """
 
 Module state has a class called State that inherits from
-Basemodel class 
+Basemodel class
 """
 from models.base_model import BaseModel
 

@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 """
 
-Module amenity has a class called Amenity that inherits from
-Basemodel class 
+Module amenity has a class called Amenity that inherits
+from Basemodel class
 """
 from models.base_model import BaseModel
 

@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from io import StringIO
 from console import HBNBCommand
-from models import storage, State, Place
+from models import storage, state, FileStorage
 
 class TestHBNBCommand(unittest.TestCase):
     def setUp(self):

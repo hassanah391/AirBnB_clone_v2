@@ -6,6 +6,12 @@ import unittest
 import json
 import os
 from models.base_model import BaseModel
+from models.user import User
+from models.state import State
+from models.place import Place
+from models.city import City
+from models.amenity import Amenity
+from models.review import Review
 from models.engine.file_storage import FileStorage
 
 
@@ -14,30 +20,52 @@ class TestFileStorage(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        """Set up test environment"""
+        cls.storage = FileStorage()
+        cls.rev1 = Review()
         cls.rev1.place_id = "Raleigh"
         cls.rev1.user_id = "Greg"
         cls.rev1.text = "Grade A"
 
-    @classmethod
-    def teardown(cls):
-        del cls.rev1
-
-    def teardown(self):
+    def setUp(self):
+        """Set up for each test"""
+        FileStorage._FileStorage__objects = {}
         try:
             os.remove("file.json")
         except:
             pass
 
-   
+    def tearDown(self):
+        """Clean up after each test"""
+        try:
+            os.remove("file.json")
+        except:
+            pass
+        FileStorage._FileStorage__objects = {}
+
+    @classmethod
+    def tearDownClass(cls):
+        """Clean up after all tests"""
+        try:
+            os.remove("file.json")
+        except:
+            pass
+        del cls.rev1
+        del cls.storage
+
     def test_all(self):
-        """
-        Tests method: all (returns dictionary <class>.<id> : <obj instance>)
-        """
+        """Tests method: all (returns dictionary <class>.<id> : <obj instance>)"""
         storage = FileStorage()
-        instances_dic = storage.all()
-        self.assertIsNotNone(instances_dic)
-        self.assertEqual(type(instances_dic), dict)
-        self.assertIs(instances_dic, storage._FileStorage__objects)
+        obj_dict = storage.all()
+        self.assertIsInstance(obj_dict, dict)
+        self.assertEqual(len(obj_dict), 0)
+        
+        # Test with new object
+        new_state = State()
+        new_state.name = "Test State"
+        storage.new(new_state)
+        self.assertEqual(len(storage.all()), 1)
+        self.assertIn(f"State.{new_state.id}", storage.all())
 
     def test_new(self):
         """

@@ -19,9 +19,27 @@ class FileStorage:
                   "City": City, "Review": Review, "Amenity": Amenity,
                   "Place": Place}
 
-    def all(self):
-        '''Return dictionary of <class>.<id> : object instance'''
-        return self.__objects
+    def all(self, cls=None):
+        '''
+        Returns a dictionary of all objects or objects of a specified class.
+
+        If no class (`cls`) is provided, returns all objects.
+        If a class (`cls`) is provided, returns only objects of that class.
+
+        Args:
+            cls (class, optional): The class to filter objects by. Defaults to None.
+        
+        Returns:
+            dict: A dictionary of objects, filtered by class if `cls` is provided.
+        '''
+        if cls is None:
+            return self.__objects
+        else:
+            objects = {}
+            for key, obj in self.__objects.items():
+                if isinstance(obj, cls):
+                    objects[key] = obj
+            return objects
 
     def new(self, obj):
         '''Add new obj to existing dictionary of instances'''
@@ -56,4 +74,15 @@ class FileStorage:
                 except KeyError:
                     print(f"Class {val['__class__']} is not recognized.")
         except FileNotFoundError:
+            pass
+
+    def delete(self, obj=None):
+        "deletes obj from __objects if it's inside "
+        if obj:
+            key = '{}.{}'.format(obj.__class__.__name__, obj.id)
+            if key in self.__objects:
+                del self.__objects[key]
+            else:
+                pass
+        else:
             pass

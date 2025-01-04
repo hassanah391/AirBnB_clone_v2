@@ -11,7 +11,7 @@ from models.city import City
 from models.review import Review
 from models.amenity import Amenity
 from models.place import Place
-
+import string
 
 class HBNBCommand(cmd.Cmd):
     """
@@ -35,15 +35,43 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, line):
-        """Create instance specified by user"""
-        if len(line) == 0:
+        """Create instance specified by user with given parameters."""
+        args = line.split()
+        if len(args) == 0:
             print("** class name missing **")
-        elif line not in HBNBCommand.classes:
+            return
+
+        class_name = args[0]
+        if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
-        else:
-            instance = eval(line)()
-            instance.save()
-            print(instance.id)
+            return
+
+        cls = HBNBCommand.classes[class_name]
+        new_instance = cls()
+
+        for param in args[1:]:
+            key_value = param.split('=')
+            if len(key_value) != 2:
+                continue
+
+            key, value = key_value
+            if value.startswith('"') and value.endswith('"'):
+                value = value[1:-1].replace('_', ' ').replace('\\"', '"')
+            elif '.' in value:
+                try:
+                    value = float(value)
+                except ValueError:
+                    continue
+            else:
+                try:
+                    value = int(value)
+                except ValueError:
+                    continue
+
+            setattr(new_instance, key, value)
+
+        new_instance.save()
+        print(new_instance.id)
 
     def do_show(self, line):
         """

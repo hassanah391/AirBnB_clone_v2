@@ -12,7 +12,6 @@ from models.review import Review
 from models.amenity import Amenity
 from models.place import Place
 import string
-import shlex
 
 class HBNBCommand(cmd.Cmd):
     """
@@ -35,35 +34,51 @@ class HBNBCommand(cmd.Cmd):
         """Overwrite default behavior to repeat last cmd"""
         pass
 
-    def do_create(self, args):
-        '''
-            Create a new instance of class BaseModel and saves it
-            to the JSON file.
-        '''
-        if len(args) == 0:
+    def do_create(self, line):
+        """Creates a new instance with given parameters"""
+        if not line:
             print("** class name missing **")
             return
-        try:
-            args = shlex.split(args)
-            new_instance = eval(args[0])()
-            for i in args[1:]:
-                try:
-                    key = i.split("=")[0]
-                    value = i.split("=")[1]
-                    if hasattr(new_instance, key) is True:
-                        value = value.replace("_", " ")
-                        try:
-                            value = eval(value)
-                        except:
-                            pass
-                        setattr(new_instance, key, value)
-                except (ValueError, IndexError):
-                    pass
-            new_instance.save()
-            print(new_instance.id)
-        except:
+            
+        args = line.split()
+        class_name = args[0]
+        
+        if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
+            
+        instance = eval(class_name)()
+        
+        for param in args[1:]:
+            if '=' not in param:
+                continue
+                
+            key, value = param.split('=', 1)
+            
+            # Handle string values
+            if value.startswith('"') and value.endswith('"'):
+                value = value[1:-1].replace('_', ' ')
+                value = value.replace('\\"', '"')
+                setattr(instance, key, value)
+                
+            # Handle float values    
+            elif '.' in value:
+                try:
+                    value = float(value)
+                    setattr(instance, key, value)
+                except ValueError:
+                    continue
+                    
+            # Handle integer values
+            else:
+                try:
+                    value = int(value)
+                    setattr(instance, key, value)
+                except ValueError:
+                    continue
+        
+        instance.save()
+        print(instance.id)
 
     def do_show(self, line):
         """

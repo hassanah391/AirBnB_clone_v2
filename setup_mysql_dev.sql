@@ -1,9 +1,9 @@
--- This script creates a database for AirBnB clone project
+-- This script creates a database for AirBnB clone project for testing
 
 -- Creates a "hbnb_dev_db" database
 CREATE DATABASE IF NOT EXISTS hbnb_dev_db;
 
--- Creates a new user called "hbnb_dev" in the localhost
+-- Creates a new user called "hbnb_dev" on the localhost
 -- With password "hbnb_dev_pwd"
 CREATE USER IF NOT EXISTS 'hbnb_dev'@'localhost'
 IDENTIFIED BY 'hbnb_dev_pwd';

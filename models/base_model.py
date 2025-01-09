@@ -2,12 +2,16 @@
 from datetime import datetime
 from uuid import uuid4
 import models
+from sqlalchemy.orm import declarative_base
+from sqlalchemy import Column, INTEGER, DATETIME
 
 """
 Module BaseModel
 Parent of all classes
 """
 
+# Define a declarative base class
+Base = declarative_base()
 
 class BaseModel():
     """Base class for Airbnb clone project
@@ -25,8 +29,15 @@ class BaseModel():
 
 
         """
+        id = Column(INTEGER, primary_key=True, nullable=True)
+        created_at = Column(DATETIME, nullable=False, default=datetime.now())
+        updated_at = Column(DATETIME, nullable=False, default=datetime.now())
+
         if kwargs:
             for key, val in kwargs.items():
+                if not hasattr(self, key):
+                    setattr(self, key, val)
+
                 if "created_at" == key:
                     self.created_at = datetime.strptime(kwargs["created_at"],
                                                         "%Y-%m-%dT%H:%M:%S.%f")
@@ -41,7 +52,6 @@ class BaseModel():
             self.id = str(uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
-            models.storage.new(self)
 
     def __str__(self):
         """
@@ -61,6 +71,7 @@ class BaseModel():
         Update instance with updated time & save to serialized file
         """
         self.updated_at = datetime.now()
+        models.storage.new(self)
         models.storage.save()
 
     def to_dict(self):
@@ -70,8 +81,15 @@ class BaseModel():
         dic = {}
         dic["__class__"] = self.__class__.__name__
         for k, v in self.__dict__.items():
+            if "_sa_instance_state" == k:
+                continue
+
             if isinstance(v, (datetime, )):
                 dic[k] = v.isoformat()
             else:
                 dic[k] = v
         return dic
+
+    def delete(self):
+        """delete the current instance from the storage"""
+        models.storage.delete(self)

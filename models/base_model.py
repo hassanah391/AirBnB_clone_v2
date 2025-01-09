@@ -3,7 +3,7 @@ from datetime import datetime
 from uuid import uuid4
 import models
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, INTEGER, DATETIME
+from sqlalchemy import Column, INTEGER, DATETIME, String
 
 """
 Module BaseModel
@@ -22,6 +22,9 @@ class BaseModel():
         __repr__(self)
         to_dict(self)
     """
+    id = Column(String(60), primary_key=True, nullable=False)
+    created_at = Column(DATETIME, nullable=False, default=datetime.now())
+    updated_at = Column(DATETIME, nullable=False, default=datetime.now())
 
     def __init__(self, *args, **kwargs):
         """
@@ -29,10 +32,6 @@ class BaseModel():
 
 
         """
-        id = Column(INTEGER, primary_key=True, nullable=True)
-        created_at = Column(DATETIME, nullable=False, default=datetime.now())
-        updated_at = Column(DATETIME, nullable=False, default=datetime.now())
-
         if kwargs:
             for key, val in kwargs.items():
                 if not hasattr(self, key):

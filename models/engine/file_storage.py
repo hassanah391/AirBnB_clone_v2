@@ -8,16 +8,13 @@ from models.city import City
 from models.review import Review
 from models.amenity import Amenity
 from models.place import Place
-
+from models import class_dict
 
 class FileStorage:
     '''serializes and deserialzes json files'''
 
     __file_path = 'file.json'
     __objects = {}
-    class_dict = {"BaseModel": BaseModel, "User": User, "State": State,
-                  "City": City, "Review": Review, "Amenity": Amenity,
-                  "Place": Place}
 
     def all(self, cls=None):
         '''

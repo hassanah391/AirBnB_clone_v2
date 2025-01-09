@@ -52,27 +52,28 @@ class DBStorage:
             Base.metadata.drop_all(self.__engine)
     
     def all(self, cls=None):
-        """
-        Query all objects depending on the class name (cls).
-        If cls is None, query all types of objects.
-        Return a dictionary with key = <class-name>.<object-id> and value = object.
-        """
-        obj_dict = {}
-        classes = [User, State, City, Amenity, Place, Review]
-        
-        if cls:
-            objs = self.__session.query(cls).all()
+        '''
+            query all types of objects
+            or a specific class objects
+            on the current database session
+        '''
+        db_dic = {}
+        if cls != "":
+            objs = self.__session.query(class_dict).all()
             for obj in objs:
-                key = f"{obj.__class__.__name__}.{obj.id}"
-                obj_dict[key] = obj
+                key = "{}.{}".format(obj.__class__.__name__, obj.id)
+                db_dic[key] = obj
+            return db_dic
         else:
-            for cls in classes:
-                objs = self.__session.query(cls).all()
-                for obj in objs:
-                    key = f"{obj.__class__.__name__}.{obj.id}"
-                    obj_dict[key] = obj
-                    
-        return obj_dict
+            for k, v in class_dict.items():
+                if k != "BaseModel":
+                    objs = self.__session.query(v).all()
+                    if len(objs) > 0:
+                        for obj in objs:
+                            key = "{}.{}".format(obj.__class__.__name__,
+                                                 obj.id)
+                            db_dic[key] = obj
+            return db_dic
 
     def new(self, obj):
         """

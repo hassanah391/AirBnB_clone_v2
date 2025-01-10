@@ -3,15 +3,23 @@
 
 from sqlalchemy import create_engine
 from os import getenv
-from models.base_model import Base
+from models.base_model import BaseModel, Base
 from sqlalchemy.orm import sessionmaker, scoped_session
-from models import class_dict
 from models.user import User
 from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
+
+class_dict = {
+    'User': User,
+    'State': State,
+    'City': City,
+    'Review': Review,
+    'Amenity': Amenity,
+    'Place': Place
+}
 
 class DBStorage:
     """
@@ -25,54 +33,44 @@ class DBStorage:
     __session = None
     
     def __init__(self):
-        """
-        Initializes the DBStorage instance.
-
-        Sets up the SQLAlchemy engine and session. If the environment variable
-        'HBNB_ENV' is set to 'test', it drops all tables in the database.
-
-        Environment Variables:
-            HBNB_MYSQL_USER (str): MySQL username.
-            HBNB_MYSQL_PWD (str): MySQL password.
-            HBNB_MYSQL_HOST (str): MySQL host.
-            HBNB_MYSQL_DB (str): MySQL database name.
-            HBNB_ENV (str): Environment type (e.g., 'test').
-        """
+        """Initialize database connection"""
         username = getenv("HBNB_MYSQL_USER")
         password = getenv("HBNB_MYSQL_PWD")
         host = getenv("HBNB_MYSQL_HOST")
         db_name = getenv("HBNB_MYSQL_DB")
         envv = getenv("HBNB_ENV", "none")
 
-        self.__engine = create_engine(f"mysql+mysqldb://{username}:\
-            {password}@{host}/{db_name}", pool_pre_ping=True)
+        self.__engine = create_engine(f"mysql+mysqldb://{username}:{password}@{host}/{db_name}", 
+                                    pool_pre_ping=True)
         
         if envv == "test":
             Base.metadata.drop_all(self.__engine)
+        
+        Session = sessionmaker(bind=self.__engine)
+        self.__session = scoped_session(Session)
     
     def all(self, cls=None):
-        '''
-            query all types of objects
-            or a specific class objects
-            on the current database session
-        '''
-        db_dic = {}
-        if cls != "":
-            objs = self.__session.query(class_dict).all()
-            for obj in objs:
-                key = "{}.{}".format(obj.__class__.__name__, obj.id)
-                db_dic[key] = obj
-            return db_dic
+        """Query objects from database"""
+        db_dict = {}
+        if cls:
+            if isinstance(cls, str):
+                cls = class_dict.get(cls)
+            if cls and hasattr(cls, "__tablename__"):
+                objs = self.__session.query(cls).all()
+            else:
+                objs = []
         else:
-            for k, v in class_dict.items():
-                if k != "BaseModel":
-                    objs = self.__session.query(v).all()
-                    if len(objs) > 0:
-                        for obj in objs:
-                            key = "{}.{}".format(obj.__class__.__name__,
-                                                 obj.id)
-                            db_dic[key] = obj
-            return db_dic
+            objs = []
+            for model_class in class_dict.values():
+                # Only query mapped classes
+                if hasattr(model_class, "__tablename__"):
+                    objs.extend(self.__session.query(model_class).all())
+
+        for obj in objs:
+            key = f"{obj.__class__.__name__}.{obj.id}"
+            db_dict[key] = obj
+
+        return db_dict
 
     def new(self, obj):
         """

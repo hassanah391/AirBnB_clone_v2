@@ -38,7 +38,6 @@ class DBStorage:
             HBNB_MYSQL_DB (str): MySQL database name.
             HBNB_ENV (str): Environment type (e.g., 'test').
         """
-        port = 3306
         username = getenv("HBNB_MYSQL_USER")
         password = getenv("HBNB_MYSQL_PWD")
         host = getenv("HBNB_MYSQL_HOST")
@@ -46,7 +45,7 @@ class DBStorage:
         envv = getenv("HBNB_ENV", "none")
 
         self.__engine = create_engine(f"mysql+mysqldb://{username}:\
-            {password}@{host}:{port}/{db_name}", pool_pre_ping=True)
+            {password}@{host}/{db_name}", pool_pre_ping=True)
         
         if envv == "test":
             Base.metadata.drop_all(self.__engine)

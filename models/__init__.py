@@ -16,7 +16,7 @@ class_dict = {"BaseModel": BaseModel, "User": User, "State": State,
                   "Place": Place}
 
 if (type_storage == "db"):
-    from engine.db_storage import DBStorage
+    from models.engine.db_storage import DBStorage
     storage = DBStorage()
 else:
     from models.engine.file_storage import FileStorage

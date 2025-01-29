@@ -1,20 +1,11 @@
 #!/usr/bin/env bash
-# Sets up web servers for web_static deployment:
-# - Installs Nginx if not installed
-# - Creates folders:
-#   * /data/
-#   * /data/web_static/
-#   * /data/web_static/releases/
-#   * /data/web_static/shared/
-#   * /data/web_static/releases/test/
-# - Creates test index.html file
-# - Creates symbolic link /data/web_static/current -> /data/web_static/releases/test/
-# - Sets ownership of /data/ folder to ubuntu user and group recursively
-# - Updates Nginx config to serve /data/web_static/current/ at /hbnb_static/
-# Usage: sudo ./0-setup_web_static.sh
-SOURCE="/data/web_static/releases/test/"
+# Sets up web servers for the deployment of web_static
+
+# Define variables
+SOURCE="/data/web_static/releases/test"
 TARGET="/data/web_static/current"
-ADD_WEBSTATIC="\\\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}\n"
+NGINX_CONFIG="/etc/nginx/sites-available/default"
+ADD_WEBSTATIC="\\\tlocation /hbnb_static {\n\t\talias $SOURCE/;\n\t}\n"
 
 # Install nginx if not installed
 if ! command -v nginx &> /dev/null
@@ -23,11 +14,12 @@ then
     sudo apt-get install nginx -y
 fi
 
-sudo mkdir -p /data/web_static/releases/
-sudo mkdir -p /data/web_static/shared/
+# Create necessary directories
 sudo mkdir -p /data/web_static/releases/test/
+sudo mkdir -p /data/web_static/shared/
 
-sudo sh -c 'cat > /data/web_static/releases/test/index.html << EOF
+# Create test HTML file
+sudo bash -c 'cat > /data/web_static/releases/test/index.html << EOF
 <html>
   <head>
   </head>
@@ -37,17 +29,22 @@ sudo sh -c 'cat > /data/web_static/releases/test/index.html << EOF
 </html>
 EOF'
 
-# Check if the symbolic link already exists
-if [ -L "$TARGET" ];
+# Remove symbolic link if it exists and create new one
+if [ -L "$TARGET" ]
 then
-    sudo rm -f "$TARGET" # Remove the symbolic link
+    sudo rm -f "$TARGET"
 fi
-
-# Create the new symbolic link
 sudo ln -sf "$SOURCE" "$TARGET"
 
-# Change owner and group of folder /data/ to ubuntu user/group
-sudo chown -hR ubuntu:ubuntu /data/
+# Set ownership
+sudo chown -R ubuntu:ubuntu /data/
 
-sudo sed -i "/server_name _;/a $ADD_WEBSTATIC" /etc/nginx/sites-available/default
-sudo nginx -t && sudo service nginx reload
+# Update Nginx configuration if location block doesn't exist
+if ! grep -q "location /hbnb_static" "$NGINX_CONFIG"; then
+    sudo sed -i "/server_name _;/a $ADD_WEBSTATIC" "$NGINX_CONFIG"
+fi
+
+# Test Nginx configuration and restart
+sudo nginx -t && sudo service nginx restart
+
+exit 0

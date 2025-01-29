@@ -21,6 +21,7 @@ import os.path
 env.user = "ubuntu"
 env.hosts = ['100.26.246.61', '54.237.93.3']
 
+
 def do_deploy(archive_path):
     """distributes an archive to your web servers"""
     if os.path.isfile(archive_path) is False:
@@ -35,8 +36,8 @@ def do_deploy(archive_path):
         run("mkdir -p {}".format(path_without_ext))
         run("tar -xzf /tmp/{} -C {}".format(filename, path_without_ext))
         run("rm /tmp/{}".format(filename))
-        run("mv {}web_static/* {}".format(path_without_ext, path_whitout_ext))
-        run("rm -rf {}web_static".format(path_whitout_ext))
+        run("mv {}web_static/* {}".format(path_without_ext, path_without_ext))
+        run("rm -rf {}web_static".format(path_without_ext))
         run("rm -rf {}".format(sylink))
         run("ln -s {} {}".format(path_without_ext, sylink))
         return True

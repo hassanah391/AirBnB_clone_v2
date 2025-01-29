@@ -60,7 +60,7 @@ def do_deploy(archive_path):
 
 
 def deploy():
-
+    """helper function"""
     archive_path = do_pack()
     if archive_path is None:
         return False

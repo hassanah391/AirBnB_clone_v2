@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Sets up web servers for the deployment of web_static
+# A bash script that Sets up web servers for the deployment of web_static
 
 # Define variables
 SOURCE="/data/web_static/releases/test"

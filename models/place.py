@@ -11,12 +11,22 @@ The class handles both SQLAlchemy database storage and File storage modes,
 automatically detecting and using the appropriate storage method based on
 configuration.
 """
+from models.amenity import Amenity
 from models.base_model import BaseModel, Base
 from os import getenv
-from sqlalchemy import Column, String, Integer, Float, ForeignKey
+from sqlalchemy import Column, String, Integer, Float, ForeignKey, Table
 from sqlalchemy.orm import relationship
 from models.review import Review
 import models
+
+
+place_amenity = Table('place_amenity', Base.metadata,
+                      Column('place_id', String(60), ForeignKey("places.id"),
+                             primary_key=True, nullable=False),
+                      Column('amenity_id', String(60),
+                             ForeignKey("amenities.id"),
+                             primary_key=True, nullable=False))
+
 
 class Place(BaseModel, Base):
     """Place class for managing accommodation listings.
@@ -58,7 +68,10 @@ class Place(BaseModel, Base):
         user = relationship("User", back_populates="places")
         cities = relationship("City", back_populates="places")
         reviews = relationship("Review", back_populates="place", cascade="all, delete")
-
+        amenities = relationship(
+            "Amenity", secondary=place_amenity,
+            viewonly=False,
+            back_populates="place_amenities")
     else:
         city_id = ""
         user_id = ""
@@ -71,8 +84,31 @@ class Place(BaseModel, Base):
         longitude = 0.0
         amenity_ids = []
 
-    @property
-    def reviews(self):
-        """Returns the list of Review instances with place_id = current Place.id"""
-        return [review for review in models.storage.all(Review).values()
-                if review.place_id == self.id]
+        @property
+        def reviews(self):
+            """Returns the list of Review instances with place_id = current Place.id"""
+            return [review for review in models.storage.all(Review).values()
+                    if review.place_id == self.id]
+
+        @property
+        def amenities(self):
+            '''
+            Return list: amenity inst's if Amenity.place_id=curr place.id
+            FileStorage many to many relationship between Place and Amenity
+            '''
+            list_amenities = []
+            for amenity in models.storage.all(Amenity).values():
+                if amenity.place_id == self.id:
+                    list_amenities.append(amenity)
+            return list_amenities
+        
+        @amenities.setter
+        def amenities(self, amenity=None):
+            '''
+            Set list: amenity instances if Amenity.place_id==curr place.id
+            Set by adding instance objs to amenity_ids attribute in Place
+            '''
+            if amenity:
+                for amenity in models.storage.all(Amenity).values():
+                    if amenity.place_id == self.id:
+                        self.amenity_ids.append(amenity)

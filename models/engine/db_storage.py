@@ -3,7 +3,6 @@
 
 from sqlalchemy import create_engine
 from os import getenv
-import models
 from models.base_model import BaseModel, Base
 from sqlalchemy.orm import sessionmaker, scoped_session
 from models.user import User
@@ -53,27 +52,27 @@ class DBStorage:
         self.__session = scoped_session(Session)
 
     def all(self, cls=None):
-        '''
-            Query current database session
-        '''
+        """Query objects from database"""
         db_dict = {}
-
-        if cls != "":
-            objs = self.__session.query(models.class_dict[cls]).all()
-            for obj in objs:
-                key = "{}.{}".format(obj.__class__.__name__, obj.id)
-                db_dict[key] = obj
-            return db_dict
+        if cls:
+            if isinstance(cls, str):
+                cls = class_dict.get(cls)
+            if cls and hasattr(cls, "__tablename__"):
+                objs = self.__session.query(cls).all()
+            else:
+                objs = []
         else:
-            for k, v in models.class_dict.items():
-                if k != "BaseModel":
-                    objs = self.__session.query(v).all()
-                    if len(objs) > 0:
-                        for obj in objs:
-                            key = "{}.{}".format(obj.__class__.__name__,
-                                                 obj.id)
-                            db_dict[key] = obj
-            return db_dict
+            objs = []
+            for model_class in class_dict.values():
+                # Only query mapped classes
+                if hasattr(model_class, "__tablename__"):
+                    objs.extend(self.__session.query(model_class).all())
+
+        for obj in objs:
+            key = f"{obj.__class__.__name__}.{obj.id}"
+            db_dict[key] = obj
+
+        return db_dict
 
     def new(self, obj):
         """
@@ -103,8 +102,7 @@ class DBStorage:
             bind=self.__engine,
             expire_on_commit=False
         )
-        Session = scoped_session(session_factory)
-        self.__session = Session()
+        self.__session = scoped_session(session_factory)
 
     def close(self):
         """Closes the current SQLAlchemy session.
@@ -112,6 +110,5 @@ class DBStorage:
         This method removes the current SQLAlchemy session, ensuring that
         all pending transactions are either committed or rolled back and
         the session is properly closed.
-        Then creates a new session for the next operations.
         """
         self.__session.remove()

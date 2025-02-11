@@ -9,21 +9,25 @@ from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 from os import getenv
 
+
 class State(BaseModel, Base):
     """A class that represents a state in Airbnb"""
     __tablename__ = "states"
-    
+
     if getenv("HBNB_TYPE_STORAGE") == "db":
         name = Column(String(128), nullable=False)
-        cities = relationship("City", 
-                            cascade="all, delete-orphan", 
-                            back_populates="state")
+        cities = relationship(
+            "City",
+            cascade="all, delete-orphan",
+            back_populates="state"
+        )
     else:
         name = ""
 
         @property
         def cities(self):
-            '''Returns the list of City instances with state_id equals to current State.id'''
+            '''Returns the list of City instances with
+            state_id equals to current State.id'''
             from models.city import City
             list_cities = []
             for city in models.storage.all(City).values():

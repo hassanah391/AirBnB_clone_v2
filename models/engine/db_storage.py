@@ -53,7 +53,11 @@ class DBStorage:
 
     def all(self, cls=None):
         """Query objects from database"""
+        if self.__session is None:
+            self.reload()
+            
         db_dict = {}
+        
         if cls:
             if isinstance(cls, str):
                 cls = class_dict.get(cls)
@@ -71,7 +75,6 @@ class DBStorage:
         for obj in objs:
             key = f"{obj.__class__.__name__}.{obj.id}"
             db_dict[key] = obj
-
         return db_dict
 
     def new(self, obj):
@@ -113,6 +116,5 @@ class DBStorage:
         the session is properly closed.
         Then creates a new session for the next operations.
         """
-        if self.__session:
-            self.__session.close()
-            self.__session = self.__session()
+        self.__session.close()
+        self.__session = None

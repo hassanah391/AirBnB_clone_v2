@@ -3,6 +3,7 @@
 
 from sqlalchemy import create_engine
 from os import getenv
+import models
 from models.base_model import BaseModel, Base
 from sqlalchemy.orm import sessionmaker, scoped_session
 from models.user import User
@@ -52,30 +53,27 @@ class DBStorage:
         self.__session = scoped_session(Session)
 
     def all(self, cls=None):
-        """Query objects from database"""
-        if self.__session is None:
-            self.reload()
-
+        '''
+            Query current database session
+        '''
         db_dict = {}
 
-        if cls:
-            if isinstance(cls, str):
-                cls = class_dict.get(cls)
-            if cls and hasattr(cls, "__tablename__"):
-                objs = self.__session.query(cls).all()
-            else:
-                objs = []
+        if cls != "":
+            objs = self.__session.query(models.class_dict[cls]).all()
+            for obj in objs:
+                key = "{}.{}".format(obj.__class__.__name__, obj.id)
+                db_dict[key] = obj
+            return db_dict
         else:
-            objs = []
-            for model_class in class_dict.values():
-                # Only query mapped classes
-                if hasattr(model_class, "__tablename__"):
-                    objs.extend(self.__session.query(model_class).all())
-
-        for obj in objs:
-            key = f"{obj.__class__.__name__}.{obj.id}"
-            db_dict[key] = obj
-        return db_dict
+            for k, v in models.class_dict.items():
+                if k != "BaseModel":
+                    objs = self.__session.query(v).all()
+                    if len(objs) > 0:
+                        for obj in objs:
+                            key = "{}.{}".format(obj.__class__.__name__,
+                                                 obj.id)
+                            db_dict[key] = obj
+            return db_dict
 
     def new(self, obj):
         """

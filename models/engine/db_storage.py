@@ -55,9 +55,9 @@ class DBStorage:
         """Query objects from database"""
         if self.__session is None:
             self.reload()
-            
+
         db_dict = {}
-        
+
         if cls:
             if isinstance(cls, str):
                 cls = class_dict.get(cls)

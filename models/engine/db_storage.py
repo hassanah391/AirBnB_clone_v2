@@ -111,5 +111,13 @@ class DBStorage:
         This method removes the current SQLAlchemy session, ensuring that
         all pending transactions are either committed or rolled back and
         the session is properly closed.
+        Then creates a new session for the next operations.
         """
         self.__session.remove()
+        # Create a new session after closing
+        session_factory = sessionmaker(
+            bind=self.__engine,
+            expire_on_commit=False
+        )
+        Session = scoped_session(session_factory)
+        self.__session = Session()

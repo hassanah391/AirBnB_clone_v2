@@ -21,6 +21,7 @@ class_dict = {
     'Place': Place
 }
 
+
 class DBStorage:
     """
     DBStorage class for interacting with the MySQL database using SQLAlchemy.
@@ -31,7 +32,7 @@ class DBStorage:
     """
     __engine = None
     __session = None
-    
+
     def __init__(self):
         """Initialize database connection"""
         username = getenv("HBNB_MYSQL_USER")
@@ -40,15 +41,16 @@ class DBStorage:
         db_name = getenv("HBNB_MYSQL_DB")
         envv = getenv("HBNB_ENV", "none")
 
-        self.__engine = create_engine(f"mysql+mysqldb://{username}:{password}@{host}/{db_name}", 
-                                    pool_pre_ping=True)
-        
+        self.__engine = create_engine(
+            f"mysql+mysqldb://{username}:{password}@{host}/{db_name}",
+            pool_pre_ping=True
+        )
         if envv == "test":
             Base.metadata.drop_all(self.__engine)
-        
+
         Session = sessionmaker(bind=self.__engine)
         self.__session = scoped_session(Session)
-    
+
     def all(self, cls=None):
         """Query objects from database"""
         db_dict = {}
@@ -96,7 +98,10 @@ class DBStorage:
         Create all tables in the database and initialize a new session
         """
         Base.metadata.create_all(self.__engine)
-        session_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        session_factory = sessionmaker(
+            bind=self.__engine,
+            expire_on_commit=False
+        )
         Session = scoped_session(session_factory)
         self.__session = Session()
 

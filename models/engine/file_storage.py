@@ -10,6 +10,7 @@ from models.amenity import Amenity
 from models.place import Place
 from models import class_dict
 
+
 class FileStorage:
     '''serializes and deserialzes json files'''
 
@@ -24,10 +25,11 @@ class FileStorage:
         If a class (`cls`) is provided, returns only objects of that class.
 
         Args:
-            cls (class, optional): The class to filter objects by. Defaults to None.
-        
+            cls (class, optional): The class to filter objects by.
+
         Returns:
-            dict: A dictionary of objects, filtered by class if `cls` is provided.
+            dict: A dictionary of objects,
+            filtered by class if `cls` is provided.
         '''
         if cls is None:
             return self.__objects

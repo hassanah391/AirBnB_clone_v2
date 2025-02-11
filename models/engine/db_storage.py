@@ -116,5 +116,4 @@ class DBStorage:
         the session is properly closed.
         Then creates a new session for the next operations.
         """
-        self.__session.close()
-        self.__session = None
+        self.__session.remove()

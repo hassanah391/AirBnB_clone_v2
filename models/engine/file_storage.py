@@ -68,7 +68,7 @@ class FileStorage:
                     return
             for key, val in new_obj.items():
                 try:
-                    obj = self.class_dict[val['__class__']](**val)
+                    obj = class_dict[val['__class__']](**val)
                     self.__objects[key] = obj
                 except KeyError:
                     print(f"Class {val['__class__']} is not recognized.")

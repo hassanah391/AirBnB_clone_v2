@@ -11,9 +11,14 @@ from os import getenv
 
 type_storage = getenv("HBNB_TYPE_STORAGE")
 
-class_dict = {"BaseModel": BaseModel, "User": User, "State": State,
-                  "City": City, "Review": Review, "Amenity": Amenity,
-                  "Place": Place}
+class_dict = {
+            "BaseModel": BaseModel,
+            "User": User, "State": State,
+            "City": City,
+            "Review": Review,
+            "Amenity": Amenity,
+            "Place": Place
+            }
 
 if (type_storage == "db"):
     from models.engine.db_storage import DBStorage
